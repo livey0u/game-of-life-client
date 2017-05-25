@@ -1,0 +1,26 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.row {
+	    width: 100%;
+    float: left;
+}
+
+.cell {
+	    width: 83.33333333333333px;
+    height: 83.33333333333333px;
+    float: left;
+    border: 1px solid;
+    box-sizing: border-box;
+}
+
+.game-board {
+	    width: 500px;
+    margin: 0 auto;
+    height: 500px;
+    border: 1px solid;
+    margin-top: 10px;
+}
