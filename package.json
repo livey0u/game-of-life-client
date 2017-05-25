@@ -6,11 +6,10 @@
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "reconnecting-websocket": "^3.0.5",
-    "serve": "^5.1.5"
-  },
-  "devDependencies": {
+    "serve": "^5.1.5",
     "react-scripts": "1.0.1"
   },
+  "devDependencies": {},
   "scripts": {
     "development": "./node_modules/react-scripts/bin/react-scripts.js build start",
     "build": "./node_modules/react-scripts/bin/react-scripts.js build",
