@@ -12,10 +12,10 @@
     "react-scripts": "1.0.1"
   },
   "scripts": {
-    "development": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
+    "development": "./node_modules/react-scripts/bin/react-scripts.js build start",
+    "build": "./node_modules/react-scripts/bin/react-scripts.js build build",
+    "test": "./node_modules/react-scripts/bin/react-scripts.js build test --env=jsdom",
+    "eject": "./node_modules/react-scripts/bin/react-scripts.js build eject",
     "start": "./node_modules/serve/bin/serve.js -p 80 -s build",
     "postinstall": "npm run build"
   }
