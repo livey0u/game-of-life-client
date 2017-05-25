@@ -17,7 +17,8 @@ class App extends Component {
   }
 
   connect() {
-    this.gameOfLifeClient = new WebSocket(`ws://${config.server.host}:${config.server.port}`);
+    let protocol = process.env.NODE_ENV === 'production' ? 'wss' : 'ws';
+    this.gameOfLifeClient = new WebSocket(`${protocol}://${config.server.host}:${config.server.port}`);
     this.gameOfLifeClient.addEventListener('message', (event) => {
       this.updateState(JSON.parse(event.data));
     });
