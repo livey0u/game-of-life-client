@@ -16,6 +16,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "start": "npm run build && ./node_modules/serve/bin/serve.js -p 80 -s build"
+    "start": "./node_modules/serve/bin/serve.js -p 80 -s build",
+    "postinstall": "npm run build"
   }
 }
