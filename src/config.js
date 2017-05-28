@@ -7,7 +7,7 @@ let config = {
 };
 if(process.env.NODE_ENV === 'production') {
 	config.server.port = 80;
-	config.server.host = 'guarded-thicket-49148.herokuapp.com';
+	config.server.host = '139.59.61.233';
 	config.server.url = `wss://${config.server.host}`;
 }
 export default config;
