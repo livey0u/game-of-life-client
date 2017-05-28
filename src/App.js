@@ -8,11 +8,15 @@ class App extends Component {
 
   constructor() {
     super();
+
+    this.patterns = [];
+
     this.init();
   }
 
   init() {
     this.setInitialState({});
+    this.initPatterns();
     this.connect();
   }
 
@@ -28,6 +32,7 @@ class App extends Component {
       layout: data.layout || [],
       color: data.color || ''
     };
+    this.state.cellWidth = (100 / this.state.layout.length);
   }
 
   updateState(message) {
@@ -36,18 +41,20 @@ class App extends Component {
     let state = this.state || {};
     if(message.event === 'EVOLUTION_EVENT') {
       state.layout = message.data.layout;
-      state.lastEvolvedAt = message.data.evolvedAt
-      console.log(JSON.stringify(state.layout, null, 2), 'EVOLUTION_EVENT');
+      state.lastEvolvedAt = message.data.evolvedAt;
+      state.cellWidth = (100 / message.data.layout.length);
     }
     else if(message.event === 'NEW_CLIENT_RESPONSE') {
       state.layout = message.data.layout;
       state.color = message.data.color;
+      state.cellWidth = (100 / message.data.layout.length);
     }
     else if(message.event === 'CELL_UPDATED_EVENT') {
       state.layout = message.data.layout;
+      state.cellWidth = (100 / message.data.layout.length);
     }
     else if(message.event === 'UPDATE_CELL_RESPONSE') {
-      console.log(message);
+      // TODO: nothing
     }
     this.state = state;
     this.setState(this.state);
@@ -60,17 +67,231 @@ class App extends Component {
     this.gameOfLifeClient.send(JSON.stringify({event: 'UPDATE_CELL', data: {cell: cell, lastEvolvedAt: this.state.lastEvolvedAt}}));
   }
 
+  initPatterns() {
+
+    this.patterns.push({
+      name: 'Tub',
+      layoutSize: 6,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Game_of_life_flower.svg/164px-Game_of_life_flower.svg.png'
+    });
+
+    this.patterns.push({
+      name: 'Toad',
+      layoutSize: 6,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/1/12/Game_of_life_toad.gif'
+    });
+
+    this.patterns.push({
+      name: 'Beacon',
+      layoutSize: 6,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Game_of_life_beacon.gif'
+    });
+
+    this.patterns.push({
+      name: 'Pentadecathlon',
+      layoutSize: 20,
+      image: 'https://upload.wikimedia.org/wikipedia/commons/f/fb/I-Column.gif'
+    });
+
+  }
+
+  getTubCells() {
+
+    let cells = [{
+      x: 2,
+      y: 1
+    }, {
+      x: 1,
+      y: 2
+    }, {
+      x: 3,
+      y: 2
+    }, {
+      x: 2,
+      y: 3
+    }];
+    return cells;
+
+  }
+
+  getToadCells() {
+
+    let cells = [{
+      x: 2,
+      y: 2
+    }, {
+      x: 3,
+      y: 2
+    }, {
+      x: 4,
+      y: 2
+    }, {
+      x: 1,
+      y: 3
+    }, {
+      x: 2,
+      y: 3
+    }, {
+      x: 3,
+      y: 3
+    }];
+
+    return cells;
+  }
+
+  getBeaconCells() {
+    let cells = [{
+      x: 1,
+      y: 1
+    }, {
+      x: 2,
+      y: 1
+    }, {
+      x: 1,
+      y: 2
+    }, {
+      x: 4,
+      y: 3
+    }, {
+      x: 3,
+      y: 4
+    }, {
+      x: 4,
+      y: 4
+    }];
+    return cells;
+  }
+
+  getPentadecathlonCells() {
+
+    let cells = [];
+    let xAxisMiddle = Math.ceil(this.state.layout.length / 2);
+    let startY = Math.ceil(this.state.layout.length / 2) - 5;
+
+    cells.push({
+      x: xAxisMiddle,
+      y: startY++
+    });
+
+    cells.push({
+      x: xAxisMiddle,
+      y: startY++
+    });
+
+     cells.push({
+      x: xAxisMiddle - 1,
+      y: startY
+    });
+
+     cells.push({
+      x: xAxisMiddle + 1,
+      y: startY++
+    });
+
+    cells.push({
+      x: xAxisMiddle,
+      y: startY++
+    });
+
+    cells.push({
+      x: xAxisMiddle,
+      y: startY++
+    });
+
+    cells.push({
+      x: xAxisMiddle,
+      y: startY++
+    });
+
+    cells.push({
+      x: xAxisMiddle,
+      y: startY++
+    });
+
+    cells.push({
+      x: xAxisMiddle - 1,
+      y: startY
+    });
+
+    cells.push({
+      x: xAxisMiddle + 1,
+      y: startY++
+    });
+
+    cells.push({
+      x: xAxisMiddle,
+      y: startY++
+    });
+
+    cells.push({
+      x: xAxisMiddle,
+      y: startY++
+    });
+
+    return cells;
+
+  }
+
+  setPattern(pattern, event) {
+
+    event.preventDefault();
+
+    let cells = this['get' + pattern.name + 'Cells']();
+    cells.forEach((cell) => this.updateCell(cell));
+
+    return false;
+
+  }
+
   renderRow(row, key) {
-    var cells = [];
-    var cellLen = row.length;
-    for(var i = 0; i < cellLen; i++) {
+    let cells = [];
+    let cellLen = row.length;
+    let style = {
+      height: this.state.cellWidth + '%'
+    };
+    for(let i = 0; i < cellLen; i++) {
       cells.push(this.renderCell(row[i], i));
     }
     return (
-      <div className="row" key={key}>
+      <div className="row" key={key} style={style}>
         {cells}
       </div>
     );
+  }
+
+  renderPatterns() {
+
+    let layoutSize = this.state.layout.length;
+    let patterns = this.patterns.filter((pattern) => {
+      return pattern.layoutSize <= layoutSize;
+    });
+    let rows = [];
+    let patternsLen = patterns.length;
+    let style = {width: (patternsLen * 120) + 'px'};
+
+    for(let i = 0; i < patternsLen; i++) {
+      rows.push(this.renderPattern(patterns[i], i));
+    }
+
+    return (
+      <ul className="patterns-list" style={style}>
+        {rows}
+      </ul>
+    );
+
+  }
+
+  renderPattern(pattern, key) {
+
+    return (
+      <li className="pattern-item" key={key}>
+        <a className="pattern-link" href="#" onClick={this.setPattern.bind(this, pattern)}>
+          <span className="pattern-name">{pattern.name}</span>
+          <img className="pattern-image" src={pattern.image} />
+        </a>
+      </li>
+    );
+
   }
 
   render() {
@@ -88,6 +309,9 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h2>Game Of Life</h2>
         </div>
+        <div className="patterns">
+          {this.renderPatterns()}
+        </div>
         <div className="game-board">
           {rows}
         </div>
@@ -97,7 +321,8 @@ class App extends Component {
 
   renderCell(cell, key) {
     let style = {
-      backgroundColor: cell.color
+      backgroundColor: cell.color,
+      width: this.state.cellWidth + '%'
     };
     return (
       <div className="cell" style={style} key={key} onClick={this.updateCell.bind(this, cell)}></div>
