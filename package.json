@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "jsondiffpatch": "^0.2.4",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-scripts": "1.0.1",
