@@ -40,31 +40,49 @@ class App extends Component {
     let color;
     let state = this.state || {};
     if(message.event === 'EVOLUTION_EVENT') {
-      state.layout = message.data.layout;
       state.lastEvolvedAt = message.data.evolvedAt;
-      state.cellWidth = (100 / message.data.layout.length);
+      this.updateEvolvedCells(message.data.cells || []);
     }
     else if(message.event === 'NEW_CLIENT_RESPONSE') {
       state.layout = message.data.layout;
       state.color = message.data.color;
       state.cellWidth = (100 / message.data.layout.length);
     }
-    else if(message.event === 'CELL_UPDATED_EVENT') {
+    else if(message.event === 'CELLS_UPDATED_EVENT') {
+      this.updateEvolvedCells(message.data.cells);
+    }
+    else if(message.event === 'UPDATE_CELLS_RESPONSE' && message.error) {
+      state.evolvedAlready = true;
+    }
+    else if(message.event === 'SERVER_RESTARTED') {
       state.layout = message.data.layout;
       state.cellWidth = (100 / message.data.layout.length);
-    }
-    else if(message.event === 'UPDATE_CELL_RESPONSE') {
-      // TODO: nothing
     }
     this.state = state;
     this.setState(this.state);
   }
 
-  updateCell(_cell) {
-    var cell = {x: _cell.x, y: _cell.y};
+  updateEvolvedCells(cells) {
+
+    let cellsLen = cells.length;
+    let layout = this.state.layout;
+
+    for(let i = 0; i < cellsLen; i++) {
+      let cell = cells[i];
+      layout[cell.y][cell.x] = cell;
+    }
+    this.setState(this.state);
+  }
+
+  tryUpdateCell(_cell) {
+    let cell = {x: _cell.x, y: _cell.y};
     cell.color = this.state.color;
     cell.state = 1;
-    this.gameOfLifeClient.send(JSON.stringify({event: 'UPDATE_CELL', data: {cell: cell, lastEvolvedAt: this.state.lastEvolvedAt}}));
+    this.doTryUpdateCells([cell]);
+  }
+
+  doTryUpdateCells(cells) {
+    this.gameOfLifeClient.send(JSON.stringify({event: 'UPDATE_CELLS', data: {cells: cells, lastEvolvedAt: this.state.lastEvolvedAt}}));
   }
 
   initPatterns() {
@@ -237,10 +255,25 @@ class App extends Component {
     event.preventDefault();
 
     let cells = this['get' + pattern.name + 'Cells']();
-    cells.forEach((cell) => this.updateCell(cell));
+
+    for(let cell of cells) {
+      cell.state = 1;
+      cell.color = this.state.color;
+    }
+
+    this.doTryUpdateCells(cells);
 
     return false;
 
+  }
+
+  renderStatus() {
+    if(!this.state.evolvedAlready) {
+      return;
+    }
+    return (
+      <span className="evolved-already">Evolved already</span>
+    );
   }
 
   renderRow(row, key) {
@@ -312,6 +345,9 @@ class App extends Component {
         <div className="patterns">
           {this.renderPatterns()}
         </div>
+        <div className="status">
+          {this.renderStatus()}
+        </div>
         <div className="game-board">
           {rows}
         </div>
@@ -325,7 +361,7 @@ class App extends Component {
       width: this.state.cellWidth + '%'
     };
     return (
-      <div className="cell" style={style} key={key} onClick={this.updateCell.bind(this, cell)}></div>
+      <div className="cell" style={style} key={key} onClick={this.tryUpdateCell.bind(this, cell)}></div>
     );
   }
 }

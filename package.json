@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "jsondiffpatch": "^0.2.4",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
+    "react-scripts": "1.0.1",
     "reconnecting-websocket": "^3.0.5",
-    "serve": "^5.1.5",
-    "react-scripts": "1.0.1"
+    "serve": "^5.1.5"
   },
   "devDependencies": {},
   "scripts": {
