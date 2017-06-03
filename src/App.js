@@ -53,6 +53,11 @@ class App extends Component {
     }
     else if(message.event === 'UPDATE_CELLS_RESPONSE' && message.error) {
       state.evolvedAlready = true;
+      setTimeout(function() {
+        let state = this.state;
+        state.evolvedAlready = false;
+        this.setState(state);
+      }.bind(this), 800);
     }
     else if(message.event === 'SERVER_RESTARTED') {
       state.layout = message.data.layout;

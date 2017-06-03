@@ -17,5 +17,8 @@
     "eject": "./node_modules/react-scripts/bin/react-scripts.js build eject",
     "start": "NODE_ENV=production ./node_modules/serve/bin/serve.js -p 80 -s build",
     "postinstall": "npm run build"
+  },
+  "engines": {
+    "node": "8.0.0"
   }
 }
