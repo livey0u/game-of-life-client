@@ -17,14 +17,15 @@ body {
 }
 
 .game-board {
-	    width: 500px;
     margin: 0 auto;
-    height: 500px;
+    height: 80vw;
     margin-top: 10px;
+    width: 80vw;
 }
 
 .patterns {
 	overflow: auto;
+	width: 100%;
 }
 
 .patterns-list {
@@ -56,5 +57,31 @@ position: absolute;
 
 .pattern-link {
 	font-size: 12px;
+}
+
+.user-bar {
+	width: 80vw;
+	margin: 0 auto;
+}
+
+.color-indicator {
+	width: 25px;
+	height: 25px;
+	display: block;
+	float: left;
+}
+
+.user-name {
+	float: left;
+	line-height: 20px;
+	width: 320px;
+
+}
+
+.change-color-button {
+	    float: left;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 5px;
 }
 

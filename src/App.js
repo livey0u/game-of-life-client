@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import WebSocket from 'reconnecting-websocket';
+import randomcolor from 'randomcolor';
 import config from './config';
 import logo from './logo.svg';
 import './App.css';
@@ -30,7 +31,8 @@ class App extends Component {
   setInitialState(data) {
     this.state = {
       layout: data.layout || [],
-      color: data.color || ''
+      color: data.color || '',
+      username: data.username || ''
     };
     this.state.cellWidth = (100 / this.state.layout.length);
   }
@@ -44,6 +46,7 @@ class App extends Component {
       this.updateEvolvedCells(message.data.cells || []);
     }
     else if(message.event === 'NEW_CLIENT_RESPONSE') {
+      state.username = message.data.username;
       state.layout = message.data.layout;
       state.color = message.data.color;
       state.cellWidth = (100 / message.data.layout.length);
@@ -281,6 +284,21 @@ class App extends Component {
     );
   }
 
+  updateUsername(event) {
+    this.state.username = event.target.value;
+    this.setState(this.state);
+  }
+
+  updateColor() {
+    let color = randomcolor({
+       luminosity: 'bright',
+       format: 'hsl',
+       seed: this.state.username
+    });
+    this.state.color = color;
+    this.setState(this.state);
+  }
+
   renderRow(row, key) {
     let cells = [];
     let cellLen = row.length;
@@ -341,6 +359,10 @@ class App extends Component {
       rows.push(this.renderRow(layout[i], i));
     }
 
+    var colorStyle = {
+      backgroundColor: this.state.color
+    };
+
     return (
       <div className="App">
         <div className="App-header">
@@ -350,7 +372,10 @@ class App extends Component {
         <div className="patterns">
           {this.renderPatterns()}
         </div>
-        <div className="status">
+        <div className="user-bar">
+          <span className="color-indicator" style={colorStyle}></span>
+          <input type="text" className="user-name" onChange={this.updateUsername.bind(this)} value={this.state.username} placeholder="Enter your name & click Change Color." />
+          <input type="button" value="Change Color" className="change-color-button" onClick={this.updateColor.bind(this)} />
           {this.renderStatus()}
         </div>
         <div className="game-board">
