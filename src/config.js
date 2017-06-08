@@ -2,7 +2,7 @@ let config = {
 	"server": {
 		"host": "localhost",
 		"port": 3001,
-		"url": `ws://localhost:3001`
+		"url": `ws://localhost:5100`
 	}
 };
 // if(process.env.NODE_ENV === 'production') {
@@ -13,6 +13,6 @@ let config = {
 if(process.env.NODE_ENV === 'production') {
 	config.server.port = 443;
 	config.server.host = 'guarded-thicket-49148.herokuapp.com';
-	config.server.url = `ws://${config.server.host}`;
+	config.server.url = `wss://${config.server.host}`;
 }
 export default config;
