@@ -84,8 +84,11 @@ class App extends Component {
 
   tryUpdateCell(_cell) {
     let cell = {x: _cell.x, y: _cell.y};
-    cell.color = _cell.color = this.state.color;
+    cell.color = this.state.color;
     cell.state = 1;
+    let state = this.state;
+    state.layout[cell.y][cell.x] = cell;
+    this.setState(state);
     this.doTryUpdateCells([cell]);
   }
 
