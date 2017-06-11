@@ -14,6 +14,12 @@ Web client for game of life game.
 	2. npm install
 	3. npm start
 
+## Heroku Deployment
+
+After setting up heroku cli, following command would deploy.
+
+	1. git push heroku master
+
 ## Notes
 	
 	Update relay server url in `src/config.js` if production url is changed.
