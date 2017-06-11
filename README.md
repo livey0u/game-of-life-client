@@ -4,15 +4,15 @@ Web client for game of life game.
 
 ## Local setup
 
-1. `git clone https://github.com/livey0u/game-of-life-client.git`
-2. `npm install`
-3. `npm run development`
+	1. git clone https://github.com/livey0u/game-of-life-client.git
+	2. npm install
+	3. npm run development
 
 ## Server setup
 
-1. `git clone https://github.com/livey0u/game-of-life-client.git`
-2. `npm install`
-3. `npm start`
+	1. git clone https://github.com/livey0u/game-of-life-client.git
+	2. npm install
+	3. npm start
 
 ## Notes
 	
@@ -20,5 +20,5 @@ Web client for game of life game.
 
 ## Todo
 
-1. Try canvas element to check the performance for world size 500 & above.
+	1. Try canvas element to check the performance for world size 500 & above.
 
