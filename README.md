@@ -18,3 +18,7 @@ Web client for game of life game.
 	
 	Update relay server url in `src/config.js` if production url is changed.
 
+## Todo
+
+1. Try canvas element to check the performance for world size 500 & above.
+
