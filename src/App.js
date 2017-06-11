@@ -2,8 +2,13 @@ import React, { Component } from 'react';
 import WebSocket from 'reconnecting-websocket';
 import randomcolor from 'randomcolor';
 import config from './config';
+import constants from './constants';
 import logo from './logo.svg';
 import './App.css';
+
+const WHITE_COLOR_HSL = 'hsl(360, 100%, 100%)';
+const DEAD = 0;
+const ALIVE = 1;
 
 class App extends Component {
 
@@ -38,23 +43,25 @@ class App extends Component {
   }
 
   updateState(message) {
+    console.log(message.event);
     let layout = [];
     let color;
     let state = this.state || {};
-    if(message.event === 'EVOLUTION_EVENT') {
+    if(message.event === constants.EVOLUTION_EVENT) {
       state.lastEvolvedAt = message.data.evolvedAt;
       this.updateEvolvedCells(message.data.cells || []);
     }
-    else if(message.event === 'NEW_CLIENT_RESPONSE') {
+    else if(message.event === constants.NEW_CLIENT_EVENT_RESPONSE) {
       state.username = message.data.username;
-      state.layout = message.data.layout;
+      state.layout = this.sizeToLayout(message.data.size);
+      this.updateEvolvedCells(message.data.cells);
       state.color = message.data.color;
-      state.cellWidth = (100 / message.data.layout.length);
+      state.cellWidth = (100 / message.data.size);
     }
-    else if(message.event === 'CELLS_UPDATED_EVENT') {
+    else if(message.event === constants.CELLS_UPDATED_EVENT) {
       this.updateEvolvedCells(message.data.cells);
     }
-    else if(message.event === 'UPDATE_CELLS_RESPONSE' && message.error) {
+    else if(message.event === constants.UPDATE_CELLS_EVENT_RESPONSE && message.error) {
       state.evolvedAlready = true;
       setTimeout(function() {
         let state = this.state;
@@ -62,12 +69,27 @@ class App extends Component {
         this.setState(state);
       }.bind(this), 800);
     }
-    else if(message.event === 'SERVER_RESTARTED') {
-      state.layout = message.data.layout;
-      state.cellWidth = (100 / message.data.layout.length);
+    else if(message.event === constants.SERVER_RESTARTED_EVENT) {
+      console.log(message);
+      state.layout = this.sizeToLayout(message.data.size);
+      this.updateEvolvedCells(message.data.cells);
+      state.cellWidth = (100 / message.data.size);
     }
     this.state = state;
     this.setState(this.state);
+  }
+
+  sizeToLayout(size) {
+    let layout = [];
+
+    for(let i = 0; i < size; i++) {
+      layout[i] = [];
+      for(let j = 0; j < size; j++) {
+        layout[i][j] = {x: j, y: i, state: DEAD, color: WHITE_COLOR_HSL};
+      }
+    }
+
+    return layout;
   }
 
   updateEvolvedCells(cells) {
@@ -85,7 +107,7 @@ class App extends Component {
   tryUpdateCell(_cell) {
     let cell = {x: _cell.x, y: _cell.y};
     cell.color = this.state.color;
-    cell.state = 1;
+    cell.state = ALIVE;
     let state = this.state;
     state.layout[cell.y][cell.x] = cell;
     this.setState(state);
@@ -93,7 +115,7 @@ class App extends Component {
   }
 
   doTryUpdateCells(cells) {
-    this.gameOfLifeClient.send(JSON.stringify({event: 'UPDATE_CELLS', data: {cells: cells, lastEvolvedAt: this.state.lastEvolvedAt}}));
+    this.gameOfLifeClient.send(JSON.stringify({event: constants.UPDATE_CELLS_EVENT, data: {cells: cells, lastEvolvedAt: this.state.lastEvolvedAt}}));
   }
 
   initPatterns() {

@@ -14,3 +14,7 @@ Web client for game of life game.
 2. `npm install`
 3. `npm start`
 
+## Notes
+	
+	Update relay server url in `src/config.js` if production url is changed.
+
